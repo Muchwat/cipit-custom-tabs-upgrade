@@ -12,6 +12,6 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
     exit;
 }
 
-delete_metadata('post', 0, '_ctdl_custom_tab_id', '', true);
-delete_metadata('post', 0, '_ctdl_content_mode_override', '', true);
-delete_metadata('post', 0, '_ctdl_legacy_tab_ids', '', true);
+delete_metadata('post', 0, '_ctdl_custom_tab_id', '', false);
+delete_metadata('post', 0, '_ctdl_content_mode_override', '', false);
+delete_metadata('post', 0, '_ctdl_legacy_tab_ids', '', false);
