@@ -32,13 +32,17 @@ Hierarchy is respected: a Tab Item with a parent renders inside that parent's su
 
 | Attribute | Default | Description |
 |---|---|---|
-| `layout` | `top` | `top`, `bottom`, `left`, `right`. Top/bottom render submenus as dropdown selects; left/right as accordions. |
+| `layout` | `top` | `top`, `bottom`, `left`, `right`. Top/bottom render submenus as dropdown selects; left/right as accordions. At ≤768px width all four collapse into the same wrapping pill row, with submenus as dropdown selects — see Mobile behavior below. |
 | `group` | — | Tab Group slug to pull Tab Items from. |
 | `id` | group slug or auto | Instance ID used in hash routing. Set this explicitly if you want stable shareable URLs on pages with multiple inline tab sets. |
 | `title` | group name | Header title. |
 | `description` | group description | Header description. |
 | `show-header` | `true` | Show the title/description/search header. |
 | `content-mode` | `false` | Strip panel borders/padding (per-tab override available in the Tab Item meta box). |
+
+### Mobile behavior (≤768px)
+
+All four layouts converge on the same presentation on small screens: the tab headers become a single centered pill row that **wraps** onto as many lines as needed so every top-level tab stays visible at once — nothing is clipped or scrolled off-screen. Tabs with children render as a pill that opens a small dropdown panel below it, matching the desktop top/bottom dropdown behavior. Tapping anywhere outside an open dropdown closes it, including on touch devices (this uses `pointerdown`/`touchstart` rather than relying on `click` alone, since iOS Safari doesn't reliably dispatch `click` on plain non-interactive elements).
 
 ### Deep linking
 
@@ -77,3 +81,9 @@ Old flat links like `#1740660865543-2fdc6c7c-720f` still work: the router resolv
 - Frontend rewritten in NATIVE JavaScript — zero dependencies, no jQuery. Eliminates every jQuery-related failure mode: version differences (`$.trim` removal in jQuery 4), load order, themes without jQuery, and optimizer bundles breaking `jQuery is not defined`. All events are delegated on `document`, so late-rendered tabs work.
 - Identical behavior to 2.0.4: hash routing, legacy flat-hash fallback (current-id AND data-legacy-ids alias resolution with URL upgrade), nested chains, dropdown-select submenus (top/bottom + all layouts on mobile), label swap/revert, click-outside close, keyboard navigation, ARIA sync, per-instance search, breakpoint re-sync.
 - Verified: 16/16 automated routing tests, including the production scenario (flat hash equal to a tab's current ID, e.g. #1722338859771-9ad29a5a-8ba9).
+
+### 2.1.1
+- Fixed a CSS specificity bug where the mobile pill row silently inherited `flex-wrap: wrap` from the desktop top/bottom rule (a more specific selector than the mobile override), so tabs could wrap unpredictably instead of following the intended mobile presentation.
+- Mobile tab row now wraps onto multiple centered lines so every top-level tab is visible at once, instead of the tabs behaving as a horizontally-scrolling strip.
+- Fixed submenus on mobile: previously they expanded inline as an accordion inside the pill row, which visually broke the row's layout. They now open as a floating dropdown panel below their pill, matching the desktop top/bottom dropdown, for every layout.
+- Click-outside-to-close is now driven by `pointerdown` (falling back to `touchstart`) instead of only `click`, so closing an open dropdown by tapping elsewhere is reliable on touch devices — iOS Safari doesn't consistently dispatch `click` on plain, non-interactive elements.
