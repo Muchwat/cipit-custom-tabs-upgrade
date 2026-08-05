@@ -3,7 +3,7 @@
  * Plugin Name: CIPIT Custom Tabs
  * Plugin URI: https://github.com/Muchwat/cipit-custom-tabs
  * Description: Implements a custom [custom_tabs] shortcode system with deep linking, dynamic content, layouts, search, collapsible submenus, and legacy-URL fallback.
- * Version: 2.1.0
+ * Version: 2.1.1
  * Author: Kevin Muchwat
  * Author URI: https://github.com/Muchwat
  * Text Domain: cipit-custom-tabs
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-define('CIPIT_CT_VERSION', '2.1.0');
+define('CIPIT_CT_VERSION', '2.1.1');
 define('CIPIT_CT_URL', plugin_dir_url(__FILE__));
 define('CIPIT_CT_PATH', plugin_dir_path(__FILE__));
 
