@@ -1,4 +1,4 @@
-# CIPIT Custom Tabs 2.1.0
+# CIPIT Custom Tabs 2.1.1
 
 A `[custom_tabs]` shortcode system for WordPress with deep linking, nested tab sets, four layouts, live search, collapsible submenus, dropdown-select submenus (top/bottom layouts), and automatic fallback for legacy v1 hash URLs.
 
