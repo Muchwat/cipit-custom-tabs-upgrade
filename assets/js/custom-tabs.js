@@ -88,6 +88,22 @@
         if (list) { list.style.maxHeight = '0'; }
     }
 
+    // Closes every open dropdown submenu. Top/bottom layouts always behave
+    // as dropdowns; sidebar layouts (left/right) only do on mobile, where
+    // they collapse into the same pill row as top/bottom.
+    function closeOpenDropdowns(exceptLi) {
+        var selector = mobileQuery.matches
+            ? '.custom-tabs-container'
+            : '.custom-tabs-container.layout-top, .custom-tabs-container.layout-bottom';
+        toArray(document.querySelectorAll(selector)).forEach(function (container) {
+            var list = headerList(container);
+            if (!list) { return; }
+            toArray(list.querySelectorAll(':scope > .tab-header-item.has-submenu.is-expanded')).forEach(function (li) {
+                if (li !== exceptLi) { collapseSubmenu(li); }
+            });
+        });
+    }
+
     /* ------------------------------------------------------------------
      * Dropdown-select labels.
      * ---------------------------------------------------------------- */
@@ -382,21 +398,25 @@
             return;
         }
 
-        // 3) Click outside any submenu: close open dropdowns. Top/bottom
-        // layouts always; ALL layouts on mobile (pill-bar mode).
+        // 3) Click outside any submenu: close open dropdowns.
         if (!e.target.closest || !e.target.closest('.tab-header-item.has-submenu')) {
-            var selector = mobileQuery.matches
-                ? '.custom-tabs-container'
-                : '.custom-tabs-container.layout-top, .custom-tabs-container.layout-bottom';
-            toArray(document.querySelectorAll(selector)).forEach(function (container) {
-                var list = headerList(container);
-                if (!list) { return; }
-                toArray(list.querySelectorAll(':scope > .tab-header-item.has-submenu.is-expanded')).forEach(function (li) {
-                    collapseSubmenu(li);
-                });
-            });
+            closeOpenDropdowns();
         }
     });
+
+    // Close open dropdowns the instant the user starts interacting elsewhere,
+    // not just on a completed click. This also covers touch devices reliably:
+    // iOS Safari won't dispatch 'click' on plain, non-interactive elements
+    // (divs, paragraphs, etc.) unless they carry their own click handler or
+    // cursor:pointer, so relying on 'click' alone can make outside-tap-to-close
+    // feel unresponsive on a phone. pointerdown/touchstart don't have that
+    // restriction and fire before 'click', so the dropdown is already gone by
+    // the time any click-based logic underneath runs.
+    var outsideCloseEvent = window.PointerEvent ? 'pointerdown' : 'touchstart';
+    document.addEventListener(outsideCloseEvent, function (e) {
+        if (e.target.closest && e.target.closest('.tab-header-item.has-submenu')) { return; }
+        closeOpenDropdowns();
+    }, { passive: true });
 
     // Keyboard support: arrows move between visible tab links, Space/Enter
     // activate, Escape closes an open dropdown and refocuses its toggle.
